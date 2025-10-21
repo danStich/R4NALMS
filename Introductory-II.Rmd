@@ -15,7 +15,7 @@ By the end of this module, you should be comfortable: 1) reading data into R, 2)
 
 <h3 id="multi"> Packages </h3>
 
-We're going to work with the `dplyr`, `ggplot2`, and `magrittr` packages for this module, so you can go ahead and put some code in your script to load them both from the library where they were installed on your computer. If you installed them with the `tidyverse`, you can go ahead and load the whole thing all at once [loves this feature].
+We're going to work with the `dplyr`, `ggplot2`, and `magrittr` packages for this module, so you can go ahead and put some code in your script to load them all from the library where they were installed on your computer. If you installed them with the `tidyverse`, you can go ahead and load the whole thing all at once [loves this feature].
 ```{r, message=FALSE, warning = FALSE}
 library(tidyverse)
 
