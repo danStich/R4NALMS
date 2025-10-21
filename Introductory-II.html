@@ -400,8 +400,8 @@ Introduction
 learned about in the first half of the Introductory session and get you
 started developing skills in data manipulation and visualization. We
 will continue to build these skills and integrate them into statistical
-analyses in the <a href="afternoon.html">Intermediate R
-workshop</a>.</p>
+analyses in the <a href="afternoon.html">Applications of R for Aquatic
+Plant Data Workshop</a>.</p>
 <p>By the end of this module, you should be comfortable: 1) reading data
 into R, 2) conducting some basic data manipulation, 3) generating new
 variables, and 4) creating and modifying basic plots.</p>
@@ -458,23 +458,25 @@ the alewife population increased rapidly and basically ate all of the
 zooplankton that eat algae. This allowed algae to grow out of control
 during the summer. Once the algae dies each year, it sinks to the bottom
 of the lake where it is decomposed by aerobic organisms that use up
-oxygen deep in the lake. The amount of oxygen available is fixed from
-about June until December each year until seasonal changes cause all of
-the water to mix together again. This means that the lowest oxygen
-levels occur in the deepest water around October or November each year.
-Oxygen levels got so low because of this that the deep, cold water
-needed by popular sport fishes such as lake trout (<em>Salvelinus
-namaycush</em>) did not have enough oxygen to support them. Therefore,
-the New York State Department of Environmental Conservation (NYSDEC),
-SUNY Oneonta Biological Field Station, Otsego Lake Association, and
-others began stocking walleye (<em>Sander vitreus</em>) to eliminate the
-alewife and reverse these changes. What a hot mess, huh?!</p>
+oxygen deep in the lake. The amount of oxygen available in the
+hypolimnion is fixed from about June until December each year until
+seasonal changes cause all of the water to mix together again. This
+means that the lowest oxygen levels occur in the deepest water around
+October or November each year. Oxygen levels got so low because of the
+alewife that the deep, cold water needed by popular sport fishes such as
+lake trout (<em>Salvelinus namaycush</em>) did not have enough oxygen to
+support them. Therefore, the New York State Department of Environmental
+Conservation (NYSDEC), SUNY Oneonta Biological Field Station, Otsego
+Lake Association, and others began stocking walleye (<em>Sander
+vitreus</em>) to eliminate the alewife and reverse these changes. What a
+hot mess, huh?!</p>
 <p>It turns out that these folks were actually successful in eliminating
 the alewife. Well, sort of. It is kind of a messy story thanks to the
 subsequent introduction of invasive zebra mussels (<em>Dreissena
-polymorpha</em>) in 2008. But, hey - that’s lake management!</p>
-<p>For this exercise, we will weed through about 30 years of data to
-summarize changes in dissolved oxygen in Otsego Lake during the last 30
+polymorpha</em>) in 2008 and their evil step-sibling the quagga mussel
+(<em>D. bugensis</em>) in 2020. But, hey - that’s lake management!</p>
+<p>For this exercise, we will weed through about 40 years of data to
+summarize changes in dissolved oxygen in Otsego Lake during the last 40
 years while all of these cool changes were happening. But, to get there
 we’ll need to do some data munging and some quality-control to assure
 that we know what we’re working with. These steps are pretty typical for
@@ -487,15 +489,13 @@ later.</p>
 <p>I constantly forget about the fancy point-and-click tools that
 RStudio brings to the table having learned much of my basic R syntax
 right before that revolution occurred. Make sure that you look at your
-data structure in your <code>Environment</code> tab or using the
+data structure in your <code>Environment</code> tab or by using the
 <code>str()</code> or <code>glimpse()</code> functions.</p>
-<p>You can also use the built-in function <code>summary()</code> to get
-a closer look at your data.</p>
 <p>Once you’ve taken a look at the data, let’s check out some
 specifics.</p>
 <p>How many (unique) years are included in this data set? If you are
 stuck look back to how we did this during the first half of the
-Introductory session you can peek at that. Or, you could
+workshop, you can peek at that. Or, you could
 <a href="http://letmegooglethat.com/?q=how+to+find+unique+values+in+R">Google</a>
 it.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Insert code for this here</span></span>
@@ -504,22 +504,24 @@ it.</p>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Do it. I&#39;ll demonstrate, don&#39;t worry!</span></span></code></pre></div>
 <p>Next, calculate the mean dissolved oxygen <code>do_mgl</code>
 throughout the water column each year. You can use the approach
-demonstrated in the first half for this.</p>
+demonstrated before the break to do this, or you could step it up a
+notch.</p>
 <p>Here is what this would look like using the <code>%&gt;%</code>
 (“pipe”) operator from the <code>magrittr</code> package to chain our
-operations together. Remember that the purpose of this is to allow us to
-pass the results of one function directly to another so we don’t have to
-create intermediate objects or use <code>$</code> notation to reference
-column names.</p>
+operations together. The purpose of this is to allow us to pass the
+results of one function directly to another so we don’t have to create
+intermediate objects or use <code>$</code> notation to reference column
+names. (There’s also now a native pipe in Base R:
+<code>|&gt;</code>.)</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># This will do it all at once!</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>ann <span class="ot">&lt;-</span> <span class="co"># Front-end object assignment</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  otsego <span class="sc">%&gt;%</span> <span class="co"># Pass otsego to the group_by function</span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> <span class="co"># Group by year and pass to summarize</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg =</span> <span class="fu">mean</span>(do_mgl))</span></code></pre></div>
-<p>But, it can be a little confusing to get dive right in like this. If
-you are not yet comfortable with the <code>%&gt;%</code> operator, you
-could do also go step-by-step using the <code>group_by()</code> and
-<code>summarize()</code> functions:</p>
+<p>But, it can be a little confusing to dive right in like this. If you
+are not yet comfortable with the <code>%&gt;%</code> operator, you could
+also go step-by-step using the <code>group_by()</code> and
+<code>summarize()</code> functions like we did earlier:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>tempdf <span class="ot">&lt;-</span> <span class="fu">group_by</span>(otsego, year) <span class="co"># Create data frame to hold grouped data</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>ann <span class="ot">&lt;-</span> <span class="fu">summarize</span>( tempdf, <span class="at">avg =</span> <span class="fu">mean</span>(do_mgl) ) <span class="co"># Summarize mean do_mgl by year</span></span></code></pre></div>
 <p>You’ll notice that if you try to print <code>ann</code> to the
@@ -590,10 +592,9 @@ dissolved oxygen in the deepest part of the lake during fall, when
 oxygen levels fall below critical levels needed by aerobic organisms at
 the bottom of the lake.</p>
 <p>You could also take a look at dissolved oxygen as a function of depth
-to see if this makes things any clearer (we’ll use some 3-d approaches
-in the Intermediate session). Of course it’s still a mess, but this code
-should show you how easy it is to switch your geometry from a boxplot to
-a scatter plot!!</p>
+to see if this makes things any clearer. Of course it’s still a mess,
+but this code should show you how easy it is to switch your geometry
+from a boxplot to a scatter plot!!</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>sp <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(otsego, <span class="fu">aes</span>(<span class="at">x =</span> depth, <span class="at">y =</span> do_mgl)) <span class="sc">+</span></span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
@@ -654,10 +655,10 @@ in years when <code>alewife</code> were <code>present</code> or
 </div>
 <div id="make-it-pretty" class="section level3">
 <h3>Make it pretty</h3>
-<p>Okay, let’s wrap up the Introductory session by making a couple of
-nice plots to visually compare hypolimnetic oxygen
-(<code>hypo$do_mgl</code>) between years in which <code>alewife</code>
-was <code>"present"</code> or <code>"absent"</code>.</p>
+<p>Okay, let’s make a couple of nice plots to visually compare
+hypolimnetic oxygen (<code>hypo$do_mgl</code>) between years in which
+<code>alewife</code> was <code>"present"</code> or
+<code>"absent"</code>.</p>
 <p>Here is the basic plot to get you started:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">ggplot</span>(hypo, <span class="fu">aes</span>(<span class="at">x =</span> alewife, <span class="at">y =</span> do_mgl, <span class="at">fill =</span> alewife)) <span class="sc">+</span></span>
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
@@ -814,6 +815,56 @@ this:</p>
 <p><img src="Introductory-II_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 </div>
 </div>
+<div id="d-plotting" class="section level2">
+<h2>3-D Plotting</h2>
+<p>Finally, we’ll wrap things up by looking at some isopleths of
+dissolved oxygen from surface to bottom throughout the year. There are a
+couple of R packages with built-in functions specifically for this, such
+as the <code>rLakeAnalyzer</code> package. Maybe if we have time we can
+play around with a couple of these in the live workshop.</p>
+<p>For now, it may not surprise you that <code>ggplot2</code> also has
+some built-in capacity for making isopleths. Let’s do some quick data
+manipulation to calculate day of year, and then we can make some
+isopleths of dissolved oxygen throughout the lake.</p>
+<p>First a word or two about date manipulation…This is probably harder
+than it should be (still) and if you read data directly into R using the
+<code>readxl</code> package you won’t need to do it. But, just in case
+you ever find yourself at the brink, prepared to throw yourself from the
+precipice after an exhausting battle with date formatting in R, you
+might find this code handy (it’s called “the magical date formatting
+code”).</p>
+<p>Convert the date string to a character string, and then convert it
+from a character string to a “DateTime” object that R can recognize if
+you give it an appropriate format. This format looks like nonsense if
+you don’t know what it means (hence the “magical”). The percent symbols
+are special operators attached to date formatting characters. You have
+to pass those in the order in which your dates are formatted. In the US,
+we do this different from most of the rest of the world, which is one
+reason why people run into trouble (R sees dates as
+<code>YYYY-MM-DD</code> natively). Note that the <code>m</code> and
+<code>d</code> are lowercase. The <code>Y</code> is uppercase because we
+have 4-digit years in our date string. If there were only 2-digit years
+(pre-Y2K folks!) then we’d use lowercase <code>y</code>.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>otsego<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="fu">as.character</span>(otsego<span class="sc">$</span>date), </span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">&quot;%m/%d/%Y&quot;</span>)</span></code></pre></div>
+<p>With that out of the way, we can create a column for day of year or
+“ordinal date” using the <code>yday()</code> function from the
+<code>lubridate</code> package.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>otsego<span class="sc">$</span>doy <span class="ot">&lt;-</span> lubridate<span class="sc">::</span><span class="fu">yday</span>(otsego<span class="sc">$</span>date)</span></code></pre></div>
+<p>At long last, we are ready to make our isopleths. The code below
+showcases one more use of pipes that we haven’t looked at yet. Here, we
+pass the otsego data to the <code>filter()</code> function where we
+choose a year, and then we send that output directly to
+<code>ggplot()</code> to plot the data.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>otsego <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2020</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> depth, <span class="at">z =</span> do_mgl)) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>() <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">2</span>, <span class="dv">12</span>, <span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a>  <span class="fu">geom_contour_filled</span>()</span></code></pre></div>
+<p><img src="Introductory-II_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p>We can spend a little extra time to make that pretty!</p>
+</div>
 <div id="summary-and-next-steps" class="section level2">
 <h2>Summary and next steps</h2>
 <p>Hopefully the power of these data manipulation and plotting
@@ -826,9 +877,10 @@ you can now spend collecting data, paddling around your favorite lake,
 playing with your kids, or writing your dissertation. You’re
 welcome.</p>
 <p>We will continue to apply these techniques in the <a
-href="intermediate.Rmd">Intermediate session</a>. If you are dying for
-more just Google “How to ____ in ggplot” and you will be served more
-examples than you can complete in a lifetime!</p>
+href="aquatic-plants.html">Applications of R for Aquatic Plant Data
+workshop</a> in the afternoon. If you are dying for more just Google
+“How to ____ in ggplot” and you will be served more examples than you
+can complete in any reasonable amount of time!</p>
 </div>
 
 <!DOCTYPE html>

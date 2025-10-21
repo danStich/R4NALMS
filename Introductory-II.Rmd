@@ -7,7 +7,7 @@
 
 <h2 id="multi"> Introduction </h2>
  
-The objective of this module is to reinforce common tools that you learned about in the first half of the Introductory session and get you started developing skills in data manipulation and visualization. We will continue to build these skills and integrate them into statistical analyses in the [Intermediate R workshop](afternoon.html).
+The objective of this module is to reinforce common tools that you learned about in the first half of the Introductory session and get you started developing skills in data manipulation and visualization. We will continue to build these skills and integrate them into statistical analyses in the [Applications of R for Aquatic Plant Data Workshop](afternoon.html).
 
 By the end of this module, you should be comfortable: 1) reading data into R, 2) conducting some basic data manipulation, 3) generating new variables, and 4) creating and modifying basic plots. 
 
@@ -44,21 +44,19 @@ These are data collected each year from Otsego Lake by personnel at the SUNY One
 
 We will use `do_mgl` for the examples that follow. This variable is a measure of the amount of dissolved oxygen available in the water at each depth on each day of the data set. Dissolved oxygen is important for supporting aerobic organisms that can't produce their own food through photosynthesis (e.g. aquatic bugs, clams, fish). It has been measured along with other water characteristics to help monitor changes in the lake due to watershed and in-lake management as well as introduced species or climate change.
 
-One of the biggest changes to Otsego Lake in the last several decades was a reduction in the amount of dissolved oxygen in the deepest water (hypolimnion). A primary cause of this reduction in dissolved oxygen was the introduction of an invasive fish, the alewife (*Alosa pseudoharengus*). Alewife are really good at eating the microscopic animals (zooplankton) that graze on algae. When they were introduced, the alewife population increased rapidly and basically ate all of the zooplankton that eat algae. This allowed algae to grow out of control during the summer. Once the algae dies each year, it sinks to the bottom of the lake where it is decomposed by aerobic organisms that use up oxygen deep in the lake. The amount of oxygen available is fixed from about June until December each year until seasonal changes cause all of the water to mix together again. This means that the lowest oxygen levels occur in the deepest water around October or November each year. Oxygen levels got so low because of this that the deep, cold water needed by popular sport fishes such as lake trout (*Salvelinus namaycush*) did not have enough oxygen to support them. Therefore, the New York State Department of Environmental Conservation (NYSDEC), SUNY Oneonta Biological Field Station, Otsego Lake Association, and others began stocking walleye (*Sander vitreus*) to eliminate the alewife and reverse these changes. What a hot mess, huh?!
+One of the biggest changes to Otsego Lake in the last several decades was a reduction in the amount of dissolved oxygen in the deepest water (hypolimnion). A primary cause of this reduction in dissolved oxygen was the introduction of an invasive fish, the alewife (*Alosa pseudoharengus*). Alewife are really good at eating the microscopic animals (zooplankton) that graze on algae. When they were introduced, the alewife population increased rapidly and basically ate all of the zooplankton that eat algae. This allowed algae to grow out of control during the summer. Once the algae dies each year, it sinks to the bottom of the lake where it is decomposed by aerobic organisms that use up oxygen deep in the lake. The amount of oxygen available in the hypolimnion is fixed from about June until December each year until seasonal changes cause all of the water to mix together again. This means that the lowest oxygen levels occur in the deepest water around October or November each year. Oxygen levels got so low because of the alewife that the deep, cold water needed by popular sport fishes such as lake trout (*Salvelinus namaycush*) did not have enough oxygen to support them. Therefore, the New York State Department of Environmental Conservation (NYSDEC), SUNY Oneonta Biological Field Station, Otsego Lake Association, and others began stocking walleye (*Sander vitreus*) to eliminate the alewife and reverse these changes. What a hot mess, huh?!
 
-It turns out that these folks were actually successful in eliminating the alewife. Well, sort of. It is kind of a messy story thanks to the subsequent introduction of invasive zebra mussels (*Dreissena polymorpha*) in 2008. But, hey - that's lake management!
+It turns out that these folks were actually successful in eliminating the alewife. Well, sort of. It is kind of a messy story thanks to the subsequent introduction of invasive zebra mussels (*Dreissena polymorpha*) in 2008 and their evil step-sibling the quagga mussel (*D. bugensis*) in 2020. But, hey - that's lake management!
 
-For this exercise, we will weed through about 30 years of data to summarize changes in dissolved oxygen in Otsego Lake during the last 30 years while all of these cool changes were happening. But, to get there we'll need to do some data munging and some quality-control to assure that we know what we're working with. These steps are pretty typical for most data sets you'll run into, and are a critical part of experimental design and the statistical analyses that we'll want to conduct later.
+For this exercise, we will weed through about 40 years of data to summarize changes in dissolved oxygen in Otsego Lake during the last 40 years while all of these cool changes were happening. But, to get there we'll need to do some data munging and some quality-control to assure that we know what we're working with. These steps are pretty typical for most data sets you'll run into, and are a critical part of experimental design and the statistical analyses that we'll want to conduct later.
 
 ### First steps for data
 
-I constantly forget about the fancy point-and-click tools that RStudio brings to the table having learned much of my basic R syntax right before that revolution occurred. Make sure that you look at your data structure in your `Environment` tab or using the `str()` or `glimpse()` functions. 
-
-You can also use the built-in function `summary()` to get a closer look at your data.
+I constantly forget about the fancy point-and-click tools that RStudio brings to the table having learned much of my basic R syntax right before that revolution occurred. Make sure that you look at your data structure in your `Environment` tab or by using the `str()` or `glimpse()` functions. 
 
 Once you've taken a look at the data, let's check out some specifics.
 
-How many (unique) years are included in this data set? If you are stuck look back to how we did this during the first half of the Introductory session you can peek at that. Or, you could <a href="http://letmegooglethat.com/?q=how+to+find+unique+values+in+R">Google</a> it.
+How many (unique) years are included in this data set? If you are stuck look back to how we did this during the first half of the workshop, you can peek at that. Or, you could <a href="http://letmegooglethat.com/?q=how+to+find+unique+values+in+R">Google</a> it.
 
 ```{r}
 # Insert code for this here
@@ -68,9 +66,9 @@ How many (unique) years are included in this data set? If you are stuck look bac
 
 ```
 
-Next, calculate the mean dissolved oxygen `do_mgl` throughout the water column each year. You can use the approach demonstrated in the first half for this.
+Next, calculate the mean dissolved oxygen `do_mgl` throughout the water column each year. You can use the approach demonstrated before the break to do this, or you could step it up a notch.
 
-Here is what this would look like using the `%>%` ("pipe") operator from the `magrittr` package to chain our operations together. Remember that the purpose of this is to allow us to pass the results of one function directly to another so we don't have to create intermediate objects or use `$` notation to reference column names. 
+Here is what this would look like using the `%>%` ("pipe") operator from the `magrittr` package to chain our operations together. The purpose of this is to allow us to pass the results of one function directly to another so we don't have to create intermediate objects or use `$` notation to reference column names. (There's also now a native pipe in Base R: `|>`.)
 
 ```{r, message = FALSE}
 # This will do it all at once!
@@ -80,7 +78,7 @@ ann <- # Front-end object assignment
   summarize(avg = mean(do_mgl))
 ```
 
-But, it can be a little confusing to get dive right in like this. If you are not yet comfortable with the `%>%` operator, you could do also go step-by-step using the `group_by()` and `summarize()` functions:
+But, it can be a little confusing to dive right in like this. If you are not yet comfortable with the `%>%` operator, you could also go step-by-step using the `group_by()` and `summarize()` functions like we did earlier:
 
 ```{r, warning=FALSE, message=FALSE}
 tempdf <- group_by(otsego, year) # Create data frame to hold grouped data
@@ -137,7 +135,7 @@ You probably got a warning message from this about non-finite values. This is be
 
 More importantly, if you look at the trends in dissolved oxygen here they don't really match the story I told you (I guess maybe if you squint). Remember that this data set currently has data from the entire water column, and we are only really interested in what happened to dissolved oxygen in the deepest part of the lake during fall, when oxygen levels fall below critical levels needed by aerobic organisms at the bottom of the lake. 
 
-You could also take a look at dissolved oxygen as a function of depth to see if this makes things any clearer (we'll use some 3-d approaches in the Intermediate session). Of course it's still a mess, but this code should show you how easy it is to switch your geometry from a boxplot to a scatter plot!!
+You could also take a look at dissolved oxygen as a function of depth to see if this makes things any clearer. Of course it's still a mess, but this code should show you how easy it is to switch your geometry from a boxplot to a scatter plot!!
 
 ```{r, warning=FALSE, message=FALSE}
 sp <- ggplot(otsego, aes(x = depth, y = do_mgl)) +
@@ -201,7 +199,7 @@ Now if we wanted to, we could calculate the mean `do_mgl` in years when `alewife
 
 
 ### Make it pretty
-Okay, let's wrap up the Introductory session by making a couple of nice plots to visually compare hypolimnetic oxygen (`hypo$do_mgl`) between years in which `alewife` was `"present"` or `"absent"`.
+Okay, let's make a couple of nice plots to visually compare hypolimnetic oxygen (`hypo$do_mgl`) between years in which `alewife` was `"present"` or `"absent"`.
 
 Here is the basic plot to get you started:
 ```{r, warning=FALSE, message=FALSE}
@@ -370,9 +368,42 @@ ggplot(hypo,
 
 ```
 
+## 3-D Plotting
+Finally, we'll wrap things up by looking at some isopleths of dissolved oxygen from surface to bottom throughout the year. There are a couple of R packages with built-in functions specifically for this, such as the `rLakeAnalyzer` package. Maybe if we have time we can play around with a couple of these in the live workshop.
+
+For now, it may not surprise you that `ggplot2` also has some built-in capacity for making isopleths. Let's do some quick data manipulation to calculate day of year, and then we can make some isopleths of dissolved oxygen throughout the lake.
+
+First a word or two about date manipulation...This is probably harder than it should be (still) and if you read data directly into R using the `readxl` package you won't need to do it. But, just in case you ever find yourself at the brink, prepared to throw yourself from the precipice after an exhausting battle with date formatting in R, you might find this code handy (it's called "the magical date formatting code").
+
+
+Convert the date string to a character string, and then convert it from a character string to a "DateTime" object that R can recognize if you give it an appropriate format. This format looks like nonsense if you don't know what it means (hence the "magical"). The percent symbols are special operators attached to date formatting characters. You have to pass those in the order in which your dates are formatted. In the US, we do this different from most of the rest of the world, which is one reason why people run into trouble (R sees dates as `YYYY-MM-DD` natively). Note that the `m` and `d` are lowercase. The `Y` is uppercase because we have 4-digit years in our date string. If there were only 2-digit years (pre-Y2K folks!) then we'd use lowercase `y`.
+```{r}
+
+otsego$date <- as.Date(as.character(otsego$date), 
+                       format = "%m/%d/%Y")
+```
+
+With that out of the way, we can create a column for day of year or "ordinal date" using the `yday()` function from the `lubridate` package. 
+```{r}
+otsego$doy <- lubridate::yday(otsego$date)
+```
+
+At long last, we are ready to make our isopleths. The code below showcases one more use of pipes that we haven't looked at yet. Here, we pass the otsego data to the `filter()` function where we choose a year, and then we send that output directly to `ggplot()` to plot the data.
+
+```{r, warning=FALSE}
+otsego %>% 
+  filter(year == 2020) %>% 
+  ggplot(aes(x = month, y = depth, z = do_mgl)) +
+  scale_y_reverse() +
+  scale_x_continuous(breaks = seq(2, 12, 2)) +
+  geom_contour_filled()
+```
+
+We can spend a little extra time to make that pretty!
+
 
 ## Summary and next steps
 
 Hopefully the power of these data manipulation and plotting techniques is starting to resonate with you. The workflow is a little tough to wrap your head around at first, but once you get it down you can re-use it again and again. This is the reason why the whole world is using these techniques now. Just think about how much time these plots would have taken to build and customize in Excel or Sigma!! This is time you can now spend collecting data, paddling around your favorite lake, playing with your kids, or writing your dissertation. You're welcome.
 
-We will continue to apply these techniques in the [Intermediate session](intermediate.Rmd). If you are dying for more just Google "How to ____ in ggplot" and you will be served more examples than you can complete in a lifetime!
+We will continue to apply these techniques in the [Applications of R for Aquatic Plant Data workshop](aquatic-plants.html) in the afternoon. If you are dying for more just Google "How to ____ in ggplot" and you will be served more examples than you can complete in any reasonable amount of time!
