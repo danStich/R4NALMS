@@ -12,7 +12,7 @@ Welcome to programming in R! This module will serve as a tutorial to help you ge
 Like any language, the learning curve for R is steep (like a cliff, not a hill), but once you get the hang of it you can learn a lot quickly. Cheat sheets like the tutorial from the workshop (or [these](https://www.rstudio.com/resources/cheatsheets/)) can help you along the way by serving as handy references.
 
 ## **Working with code**
-We will spend a bit of time during the introductory session to orient attendees with the RStudio IDE and talk about file management. Here are some additional pointers about working with code.
+We will spend a bit of time during the introductory session to orient attendees with the RStudio integrated development environment (IDE) and talk about file management. Here are some additional pointers about working with code.
 
 There are a lot of different ways to write computer code. Each has pros and cons and **all** of them are intended to increase efficiency and readability. There is no "right" way to edit your code, but it will make your life easier if you find a style you like and stick to those conventions. Here are a couple of points that can be helpful when you are just starting out:
 
@@ -29,7 +29,7 @@ knitr::opts_chunk$set(width = 20)
 
 # R ignores comments so you have
 # a way to write down what you have
-# done or what you are doing.
+# done or what you are doing and why.
 
 # This is useful for sharing
 # code or just figuring out
@@ -44,7 +44,7 @@ knitr::opts_chunk$set(width = 20)
 
 3. Either 1 or 2, but press the `Run` button at the top of the source file to run the code block.
    
-4. Once you've run a code block you can change it and then press the button next to `Run` (or `Ctrl + Shift + P`)  to 're-run' the previous block of code.
+4. Once you've run a code block you can change it and then press the button next to `Run` (or `Ctrl + Alt + P`)  to 're-run' the previous block of code.
 
 > Try it on your own!
 
@@ -104,7 +104,7 @@ Some things can be expressed in multiple ways. For example, both "`T`" and "`TRU
 T == TRUE
 ```
 
-Some names are reserved or pre-defined. Did you notice that R already knew what `T` and `TRUE` were without us defining them? These reserved operators, and built in **functions** are the building blocks of the R language.
+Some names are reserved or pre-defined. Did you notice that R already knew what `T` and `TRUE` were without us defining them? These reserved objects, and built-in **functions** are the building blocks of the R language.
 
 For example,
 ```{r, eval=FALSE}
@@ -120,7 +120,7 @@ Some **symbols** are also reserved for special use as operators, like:
 
 <h3 id="multi">**Some other handy tricks**</h3>
 
-The `Home` button will move you to the start of the line of code, and to the start of the line if you press it twice. The `End` button on your keyboard will take you to the end of a line. These will help you move around your code faster.
+The `Home` button will move you to the start of the line of code, and to the start of the line if you press it twice. The `End` button on your keyboard will take you to the end of a line. These will help you move around your code faster. If you don't have them you're cooked, but there is probably a speed key combination you can use.
 
 The `Tab` button on your keyboard will move the code to the right some number of spaces (user defined). Pressing `Shift + Tab` will move code to the left. These can help you organize your code quickly.
 
@@ -242,14 +242,14 @@ f <- a[3]
 
 If it is not yet obvious, we have to assign the output of functions to new objects for the values to be useable in the future. In the example above, `a` is never actually *changed*. This is a common source of confusion early on.
 
-Going further, we could select vector elements based on  some condition. On the first line of code, we tell R to show us the indices of the elements in vector `b` that match the character string `c`. Outloud, we would say, "`b` where the value of `b` is equal to `c`" in the first example. We can also use built-in R functions to just store the indices for all elements of `b` where `b` is equal to the character string '`c`'.
+Going further, we could select vector elements based on some condition. On the first line of code, we tell R to show us the indices of the elements in vector `b` that match the character string `c`. Out loud, we would say, "`b` where the value of `b` is equal to `c`" in the first example. We can also use built-in R functions to just store the indices for all elements of `b` where `b` is equal to the character string '`c`'.
 
 ```{r}
 b[b == "c"]
 which(b == "c")
 ```
 
-Perhaps more practically speaking, we can do elemen-twise math operations on vectors easily in R.
+Perhaps more practically speaking, we can do element-wise math operations on vectors easily in R.
 ```{r}
 a * .5 # Multiplication
 a + 100 # Addition
@@ -322,7 +322,7 @@ All the same operations we did on vectors above...one example.
 More on matrices as we need them. We won't use these a lot in this module, but R relies heavily on matrices (and arrays) to do the heavy lifting behind the scenes.
 
 ### **Dataframes**
-Dataframes are like matrices, only not. They have a row/column structure like matrices. But, they can hold more than one data type! They are basically a whole bunch of vectors that are smashed together into a single container. 
+Dataframes are like matrices, only not. They have a row/column structure like matrices. But, they can hold more than one data type! They are basically a whole bunch of vectors that are smashed together into a single container (a list, a special kind of vector). 
 
 Referencing specific elements of a dataframe is similar to a matrix, but we can also access columns ("variables") by name using the `$` to reference the column we want from within a dataframe. We'll look at this with some real data so it's more fun. Most of the packages in R have built-in data sets that we can use for examples, too. For now, let's read in our first real data file as most of our data are stored that way and will be read in as `.csv` or `.txt` files.
 
@@ -392,7 +392,7 @@ library(tidyverse)
 
 ```
 
-You will probably get a bunch of messages to tell you which packages have been loaded and if there were any `NAMESPACE` conflicts of functions that are "masked" from base R. None of these will affect us. I just told R not to print it on the website.
+You will probably get a bunch of messages to tell you which packages have been loaded and if there were any `NAMESPACE` conflicts of functions that are "masked" from base R. None of these will affect us. I just told R not to print it on the website because it takes up space.
 
 Now that we've loaded this suite of data management tools, we can summarize temperature in our data set really easily.
 
@@ -485,4 +485,3 @@ Now that we have a handle on how R works, and how to get our data in and back ou
 Stay tuned!
 
 <br>
-
