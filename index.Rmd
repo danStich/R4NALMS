@@ -9,7 +9,7 @@ title: "R4NALMS"
 <h3 top-margin:10px;><b>NALMS International Symposium R Workshops</b></h3> 
 <img src="./images/graphs.png" alt="">
 
-Welcome to the <b>R4NALMS</b> homepage for R workshops at the International NALMS Symposium. This page hosts content for both the <b>Introduction to R for Aquatic Research</b> and the <b>Applications of R for Aquatic Plant Data</b> workshops. 
+Welcome to the <b>R4NALMS</b> homepage for R workshops at the International NALMS Symposium. This page hosts content for both the <b>Introduction to R for Aquatic Research</b> and the <b>Applications of R for Aquatic Plant Data</b> workshops being offered at the 2025 NALMS Symposium. 
 
 The <a href="morning.html"> Introduction to R for Aquatic Research Workshop </a> (8:00 - 12:00 pm Monday November 4 2025) will be an introduction to <a href=https://www.r-project.org/> R </a> as a functional, vectorized, and object-oriented programming language. It will cover R syntax, how to read and write R code, types of variables and objects, functions, basic data load and management, descriptive statistics, and working with R packages like those included in the `tidyverse` for data summaries and plots. 
 
