@@ -15,7 +15,7 @@ The Introduction to R for Aquatic Research workshop will provide an introduction
 
 <!-- The **data and code files** needed for both workshops <a href="https://github.com/danStich/data4_r4nalms"> here </a>, along with instructions for download. -->
 
-For those wishing to get a head start on learning about R, the Introductory session will loosely follow along with Chapters 1 - 4 in [The Worst Stats Text eveR](https://danstich.github.io/worst-r/).
+For those wishing to get a head start on learning about R, the introductory workshop will loosely follow along with Chapters 1 - 4 in [The Worst Stats Text eveR](https://danstich.github.io/worst-r/).
 
 <br>
  
