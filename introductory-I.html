@@ -406,8 +406,9 @@ help you along the way by serving as handy references.</p>
 <div id="working-with-code" class="section level2">
 <h2><strong>Working with code</strong></h2>
 <p>We will spend a bit of time during the introductory session to orient
-attendees with the RStudio IDE and talk about file management. Here are
-some additional pointers about working with code.</p>
+attendees with the RStudio integrated development environment (IDE) and
+talk about file management. Here are some additional pointers about
+working with code.</p>
 <p>There are a lot of different ways to write computer code. Each has
 pros and cons and <strong>all</strong> of them are intended to increase
 efficiency and readability. There is no “right” way to edit your code,
@@ -422,7 +423,7 @@ when you are just starting out:</p>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># R ignores comments so you have</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># a way to write down what you have</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># done or what you are doing.</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># done or what you are doing and why.</span></span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co"># This is useful for sharing</span></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># code or just figuring out</span></span>
@@ -437,7 +438,7 @@ when you are just starting out:</p>
 <li><p>Either 1 or 2, but press the <code>Run</code> button at the top
 of the source file to run the code block.</p></li>
 <li><p>Once you’ve run a code block you can change it and then press the
-button next to <code>Run</code> (or <code>Ctrl + Shift + P</code>) to
+button next to <code>Run</code> (or <code>Ctrl + Alt + P</code>) to
 ‘re-run’ the previous block of code.</p></li>
 </ol>
 <blockquote>
@@ -504,7 +505,7 @@ logical value of <code>TRUE</code>.</p>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">TRUE</span></span></code></pre></div>
 <p>Some names are reserved or pre-defined. Did you notice that R already
 knew what <code>T</code> and <code>TRUE</code> were without us defining
-them? These reserved operators, and built in <strong>functions</strong>
+them? These reserved objects, and built-in <strong>functions</strong>
 are the building blocks of the R language.</p>
 <p>For example,</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="cf">in</span>, <span class="cf">if</span>, <span class="cf">else</span>, <span class="cf">for</span>, <span class="cf">function</span>()</span></code></pre></div>
@@ -521,7 +522,9 @@ operators, like:</p>
 <p>The <code>Home</code> button will move you to the start of the line
 of code, and to the start of the line if you press it twice. The
 <code>End</code> button on your keyboard will take you to the end of a
-line. These will help you move around your code faster.</p>
+line. These will help you move around your code faster. If you don’t
+have them you’re cooked, but there is probably a speed key combination
+you can use.</p>
 <p>The <code>Tab</code> button on your keyboard will move the code to
 the right some number of spaces (user defined). Pressing
 <code>Shift + Tab</code> will move code to the left. These can help you
@@ -717,7 +720,7 @@ is a common source of confusion early on.</p>
 <p>Going further, we could select vector elements based on some
 condition. On the first line of code, we tell R to show us the indices
 of the elements in vector <code>b</code> that match the character string
-<code>c</code>. Outloud, we would say, “<code>b</code> where the value
+<code>c</code>. Out loud, we would say, “<code>b</code> where the value
 of <code>b</code> is equal to <code>c</code>” in the first example. We
 can also use built-in R functions to just store the indices for all
 elements of <code>b</code> where <code>b</code> is equal to the
@@ -727,7 +730,7 @@ character string ‘<code>c</code>’.</p>
 <span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>Levels<span class="sc">:</span> a b c d e</span></code></pre></div>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">which</span>(b <span class="sc">==</span> <span class="st">&quot;c&quot;</span>)</span>
 <span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">3</span></span></code></pre></div>
-<p>Perhaps more practically speaking, we can do elemen-twise math
+<p>Perhaps more practically speaking, we can do element-wise math
 operations on vectors easily in R.</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>a <span class="sc">*</span> .<span class="dv">5</span> <span class="co"># Multiplication</span></span>
 <span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">0.5</span> <span class="fl">1.0</span> <span class="fl">1.5</span> <span class="fl">2.0</span> <span class="fl">2.5</span></span></code></pre></div>
@@ -825,7 +828,7 @@ lifting behind the scenes.</p>
 <p>Dataframes are like matrices, only not. They have a row/column
 structure like matrices. But, they can hold more than one data type!
 They are basically a whole bunch of vectors that are smashed together
-into a single container.</p>
+into a single container (a list, a special kind of vector).</p>
 <p>Referencing specific elements of a dataframe is similar to a matrix,
 but we can also access columns (“variables”) by name using the
 <code>$</code> to reference the column we want from within a dataframe.
@@ -892,11 +895,11 @@ give you about the data set.</p>
 because we have both rows (first dimension) and columns (second
 dimension) in our data set now!</p>
 <div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a>otsego[<span class="dv">12</span>, <span class="dv">4</span>]</span>
-<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">14</span></span></code></pre></div>
+<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">25</span></span></code></pre></div>
 <p>Another way to say this is, “What is the 12th value of
 <code>depth</code> in <code>otsego</code>”?</p>
 <div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>otsego[<span class="dv">12</span>, <span class="st">&quot;depth&quot;</span>]</span>
-<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">14</span></span></code></pre></div>
+<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="dv">25</span></span></code></pre></div>
 <p>More realistically, we might want to know the average temperature
 (<code>temp</code>) at a given <code>depth</code> in the lake. In the
 example below, we ask R for the mean temperature at 10 m across all
@@ -907,7 +910,7 @@ dollar sign (<code>$</code>) here is telling R to look for something
 called <code>temp</code> inside of the <code>otsego</code>
 dataframe.</p>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="fu">mean</span>(otsego<span class="sc">$</span>temp[otsego<span class="sc">$</span>depth <span class="sc">==</span> <span class="fl">10.0</span>], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">10.7102</span></span></code></pre></div>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a>[<span class="dv">1</span>] <span class="fl">10.81386</span></span></code></pre></div>
 <p>Wow…heavy stuff, but this is how the wheels turn.</p>
 <p>Let’s look at a better way to summarize these data by year. To do
 this, we’ll load the <code>tidyverse</code> package. This is actually a
@@ -927,7 +930,8 @@ demonstrated in live and recorded content.</p>
 <p>You will probably get a bunch of messages to tell you which packages
 have been loaded and if there were any <code>NAMESPACE</code> conflicts
 of functions that are “masked” from base R. None of these will affect
-us. I just told R not to print it on the website.</p>
+us. I just told R not to print it on the website because it takes up
+space.</p>
 <p>Now that we’ve loaded this suite of data management tools, we can
 summarize temperature in our data set really easily.</p>
 <p>First, we will group the data set by month and depth so that behind
@@ -967,7 +971,7 @@ using <code>ggplot()</code> as long as we have the
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="fu">ggplot</span>(otsego_summary, <span class="fu">aes</span>(<span class="at">x =</span> mean_temp, <span class="at">y =</span> depth)) <span class="sc">+</span></span>
 <span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>month)</span></code></pre></div>
-<p><img src="introductory_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<p><img src="introductory-I_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
 <p>Wow, what a neat picture, but what if we wanted temperature in
 Fahrenheit for our stakeholders???</p>
 </div>
