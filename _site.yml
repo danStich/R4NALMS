@@ -5,9 +5,9 @@ navbar:
   left:
     - text: "Before the workshop"
       href: software.html
-    - text: "Introductory"
+    - text: "Introduction to R"
       href: morning.html
-    - text: "Intermediate"
+    - text: "Aquatic Plant Data in R"
       href: afternoon.html
     - text: "Resources"
       href: resources.html
