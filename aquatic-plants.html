@@ -430,23 +430,23 @@ and dates from the survey based on spatial and temporal autocorrelation
 in the data, with depth as a covariate of abundance, and with permission
 for all of this from the data originators. As an aside, this was a fun
 learning experience and the AI ended up using the same methods we would
-have employed, but interestingly it used Python instead of R. And, it
-did a pretty not bad job of simulating the new data set that we’ll play
-with. Back on track here.</p>
+have employed, but ironically it used Python instead of R. And, it did a
+pretty not bad job of simulating the new data set that we’ll play with.
+Back on track here.</p>
 <p>Read in the simulated data now that we are done with story time:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Thanks, co-pilot!</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>plants <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/plant_abundances.csv&quot;</span>)</span></code></pre></div>
-<p>Have a look at the data set using glimpse, as shown below, or you can
-look at it in the data table format using <code>View()</code>. We’re not
-showing the output here in our version because it’s a bit long.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>plants <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/plant_abundances.csv&quot;</span>)</span></code></pre></div>
+<p>Have a look at the data set using <code>glimpse()</code>, as shown
+below, or you can look at it in data table format using
+<code>View()</code>. We’re not showing the output here in our version
+because it’s a bit long.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">glimpse</span>(plants)</span></code></pre></div>
 <p>This is a pretty standard point-intercept data set. It is in a
 somewhat “wide” format. That is, plant species are in columns to the
-right of all the other aggregated, site and event data. The wide format
+right of all the other aggregated site and event data. The wide format
 is good for data entry and viewing in spreadsheets, but it is not how
 we’ll want the data formatted for <em>most</em> of our needs in R.</p>
 <p>We’ll first need to get the data set into a longer format to work
-with it more easily for most R applications. This would be a bit of a
+with it more easily for most uses in R. This would be a bit of a
 copy-paste nightmare in your typical spreadsheet application. But, it is
 very easily done using the <code>pivot_longer()</code> function from the
 <code>dplyr</code> package. We’re telling R to stack the individual
@@ -459,6 +459,176 @@ species columns were named similarly.</p>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                          <span class="at">cols =</span> <span class="dv">8</span><span class="sc">:</span><span class="fu">ncol</span>(plants),</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="st">&quot;Species&quot;</span>,</span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;Abundance&quot;</span>)</span></code></pre></div>
+</div>
+<div id="presence-absence-data" class="section level2">
+<h2>Presence-absence data</h2>
+<p>First, we’ll look at how we can work with information about presences
+and absences of plants at each site on each survey to say something
+about the plant community. Some common tools for assessing plant
+communities might include metrics such as species richness or
+evenness.</p>
+<p>To start with, we’ll need to make a new column for presence-absence
+data so we can do things like add up species. There are a few different
+ways to do this. A succinct approach would be to initialize a new column
+that is all zeroes and then replace any zeroes with ones if the
+<code>Abundance</code> column contained anything other than
+<code>Z</code>. Like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Initialize new column called Presence of all `0`s</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>long_data<span class="sc">$</span>Presence <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co"># Change this to `1` if Abundance does not equal `Z` for zero</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>long_data<span class="sc">$</span>Presence[long_data<span class="sc">$</span>Abundance <span class="sc">!=</span> <span class="st">&quot;Z&quot;</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span></code></pre></div>
+<p>We could look at the presence absence data in a few different ways.
+First, let’s estimate species richness for each <code>Site</code> and
+<code>Survey</code> using the replicate observations
+(<code>Toss</code>). We’re also keeping columns for
+<code>Longitude</code> and <code>Latitude</code> here so we can play
+with those below.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> long_data <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Site, Survey, Longitude, Latitude) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Richness =</span> <span class="fu">sum</span>(Presence))</span></code></pre></div>
+<p>Now we can make a boxplot to visualize richness across surveys (June,
+July, August) to see if there are obvious seasonal trends.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">ggplot</span>(richness, <span class="fu">aes</span>(<span class="at">x =</span> Survey, <span class="at">y =</span> Richness, <span class="at">group =</span> Survey)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="aquatic-plants_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>This is cool, but you could spend some time to make it a little
+prettier. It looks like there is an increase from June through the later
+months, but it’s not super clear whether survey <code>2</code> and
+<code>3</code> differed from one another.</p>
+<p>You could formally test for differences among groups using a variety
+of approaches.</p>
+</div>
+<div id="temporal-trends-in-species-richness" class="section level2">
+<h2>Temporal trends in species richness</h2>
+<p>The simplest approach, free of distributional assumptions and a lot
+of other potential statistical pitfalls, would be to use a
+non-parametric Kruskal-Wallis test to determine whether there were
+significant differences in Richness among surveys.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">kruskal.test</span>(Richness <span class="sc">~</span> Survey, <span class="at">data =</span> richness)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    Kruskal<span class="sc">-</span>Wallis rank sum test</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>data<span class="sc">:</span>  Richness by Survey</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>Kruskal<span class="sc">-</span>Wallis chi<span class="sc">-</span>squared <span class="ot">=</span> <span class="fl">33.549</span>, df <span class="ot">=</span> <span class="dv">2</span>, p<span class="sc">-</span>value <span class="ot">=</span> <span class="fl">5.187e-08</span></span></code></pre></div>
+<p>This tells us that there were differences among surveys, but it
+doesn’t give us any statistical information about how richness differed
+among sites. For that you’d need to use some kind of pairwise comparison
+like the pairwise Wilcox test. Usually these tests have some kind of
+adjustment to account for increased Type-I error rate. Here we use a
+Bonferroni adjustment for p-values, although we are not advocating
+specifically for that approach (there are a bunch).</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">pairwise.wilcox.test</span>(<span class="at">x =</span> richness<span class="sc">$</span>Richness, <span class="at">g =</span> richness<span class="sc">$</span>Survey, <span class="at">p.adjust.method =</span> <span class="st">&quot;bonferroni&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    Pairwise comparisons using Wilcoxon rank sum test with continuity correction </span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>data<span class="sc">:</span>  richness<span class="sc">$</span>Richness and richness<span class="sc">$</span>Survey </span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="dv">1</span>       <span class="dv">2</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="dv">2</span> <span class="fl">8.6e-07</span> <span class="sc">-</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="dv">3</span> <span class="fl">3.2e-06</span> <span class="dv">1</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>P value adjustment method<span class="sc">:</span> bonferroni </span></code></pre></div>
+<p>This output shows that richness differed significantly between
+<code>Survey 1</code> and <code>Survey 2</code> (p &lt; 0.001), and
+<code>Survey 1</code> and <code>Survey 3</code> (p &lt; 0.001), but we
+failed to detect a difference in <code>Richness</code> between
+<code>Survey 2</code> and <code>Survey 3</code> (p = 1). We could fall
+back on the boxplot we made above to report these results.</p>
+<p>At some point, you’d probably want to account for the fact that
+species richness observations are based on multiple sites and locations,
+either by incorporating that into statistical tests directly or as a
+“random effect” in more complex models.</p>
+</div>
+<div id="spatial-trends-in-species-richness" class="section level2">
+<h2>Spatial trends in species richness</h2>
+<p>We could also use R to investigate spatial trends in species
+richness. This requires a little more in-depth knowledge about
+statistics and modeling, but it is still pretty straightforward to do in
+R. This type of question is very approachable through use of generalized
+linear models that include everything from ANOVA, linear regression, and
+analysis of covariance (ANCOVA) to logistic regression and count models.
+And, these modeling tools are easy to use in R (maybe too easy) as long
+as you have a functional understanding of them.</p>
+<p>For example, we could use the <code>glm()</code> function to examine
+spatial and temporal patterns in species richness pretty easily. We use
+a Poisson count model below to demonstrate what this could look
+like.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>richness_mod <span class="ot">&lt;-</span> <span class="fu">glm</span>(Richness <span class="sc">~</span> Longitude<span class="sc">*</span>Latitude <span class="sc">+</span> <span class="fu">factor</span>(Survey), </span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>                    <span class="at">data =</span> richness, </span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>                    <span class="at">family =</span> poisson)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="fu">summary</span>(richness_mod)</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>Call<span class="sc">:</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="fu">glm</span>(<span class="at">formula =</span> Richness <span class="sc">~</span> Longitude <span class="sc">*</span> Latitude <span class="sc">+</span> <span class="fu">factor</span>(Survey), </span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>    <span class="at">family =</span> poisson, <span class="at">data =</span> richness)</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>Coefficients<span class="sc">:</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>                     Estimate Std. Error z value <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>z<span class="sc">|</span>)    </span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>(Intercept)        <span class="sc">-</span><span class="fl">1.844e+06</span>  <span class="fl">3.081e+05</span>  <span class="sc">-</span><span class="fl">5.985</span> <span class="fl">2.17e-09</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>Longitude          <span class="sc">-</span><span class="fl">2.462e+04</span>  <span class="fl">4.114e+03</span>  <span class="sc">-</span><span class="fl">5.984</span> <span class="fl">2.18e-09</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>Latitude            <span class="fl">4.309e+04</span>  <span class="fl">7.207e+03</span>   <span class="fl">5.979</span> <span class="fl">2.24e-09</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="fu">factor</span>(Survey)<span class="dv">2</span>     <span class="fl">6.620e-01</span>  <span class="fl">9.643e-02</span>   <span class="fl">6.865</span> <span class="fl">6.66e-12</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="fu">factor</span>(Survey)<span class="dv">3</span>     <span class="fl">6.714e-01</span>  <span class="fl">9.628e-02</span>   <span class="fl">6.974</span> <span class="fl">3.08e-12</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>Longitude<span class="sc">:</span>Latitude  <span class="fl">5.752e+02</span>  <span class="fl">9.621e+01</span>   <span class="fl">5.978</span> <span class="fl">2.25e-09</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="sc">---</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> <span class="st">&#39;***&#39;</span> <span class="fl">0.001</span> <span class="st">&#39;**&#39;</span> <span class="fl">0.01</span> <span class="st">&#39;*&#39;</span> <span class="fl">0.05</span> <span class="st">&#39;.&#39;</span> <span class="fl">0.1</span> <span class="st">&#39; &#39;</span> <span class="dv">1</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a>(Dispersion parameter <span class="cf">for</span> poisson family taken to be <span class="dv">1</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a>    Null deviance<span class="sc">:</span> <span class="fl">340.47</span>  on <span class="dv">161</span>  degrees of freedom</span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a>Residual deviance<span class="sc">:</span> <span class="fl">207.62</span>  on <span class="dv">156</span>  degrees of freedom</span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a>AIC<span class="sc">:</span> <span class="fl">730.52</span></span>
+<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a>Number of Fisher Scoring iterations<span class="sc">:</span> <span class="dv">5</span></span></code></pre></div>
+<p>We could check out the residuals to see whether we are in extreme
+violation of distributional assumptions. These plots show that the model
+residuals are more-or-less symmetrical, which aligns with assumptions of
+the Poissson distribution. There are a few zeroes in the earliest survey
+that are expressed as a peak around -1 for survey 1 in the plot below.
+If this was a larger proportion we’d have to be careful about assessing
+their influence, and may opt for an alternative approach, but this will
+suffice for the rest of our example for now.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># You can extract model residuals (errors) like this</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co"># and add them to the original data</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>richness<span class="sc">$</span>residuals <span class="ot">&lt;-</span> richness_mod<span class="sc">$</span>residuals</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co"># That makes it easy to graph the residuals in ggplot!</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="fu">ggplot</span>(richness, <span class="fu">aes</span>(<span class="at">x =</span> residuals)) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey)</span></code></pre></div>
+<p><img src="aquatic-plants_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Then, we could make predictions from the statistical model to
+visualize the spatial and temporal patterns we found. Here, we’ll just
+make predictions from the model on the response scale for simplicity (as
+opposed to the link scale, but that’s a different workshop).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>richness<span class="sc">$</span>preds <span class="ot">&lt;-</span>  <span class="fu">predict</span>(richness_mod, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span></code></pre></div>
+<p>Now, we can plot predicted species richness.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">ggplot</span>(richness, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">color =</span> preds)) <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey)</span></code></pre></div>
+<p><img src="aquatic-plants_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Wow, that’s so cool!!! But, there are a bunch of things we can
+improve, for example adding a color ramp that’s easier to read.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># We could use the RColorBrewer package to make a spectral scale that looks cool</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>myPalette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="dv">10</span>, <span class="st">&quot;Spectral&quot;</span>)))</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">10</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                             <span class="at">oob =</span> scales<span class="sc">::</span>squish)</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># Then we just add it to our ggplot like so, along with a couple of other </span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co"># changes in the name of beautiful data visualization</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="fu">ggplot</span>(richness, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">color =</span> preds)) <span class="sc">+</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey) <span class="sc">+</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>  sc <span class="sc">+</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Species Richness&quot;</span>) <span class="sc">+</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="aquatic-plants_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+<div id="presence-absence-for-a-given-species" class="section level2">
+<h2>Presence-absence for a given species</h2>
 </div>
 
 <!DOCTYPE html>

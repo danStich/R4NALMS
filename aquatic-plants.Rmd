@@ -79,7 +79,7 @@ This is cool, but you could spend some time to make it a little prettier. It loo
 You could formally test for differences among groups using a variety of approaches.
 
 ## Temporal trends in species richness
-The simplest approach, free of distributional assumptions and a lot of other potential statistical pitfalls, would be to use a non-parametric Kruskal-Wallis test to determine whether there were significant differences in Richness among surveys.
+The simplest approach, free of distributional assumptions and a lot of other potential statistical pitfalls, would be to use a non-parametric Kruskal-Wallis rank sum test to determine whether there were significant differences in Richness among surveys.
 ```{r}
 kruskal.test(Richness ~ Survey, data = richness)
 ```
@@ -133,3 +133,21 @@ ggplot(richness, aes(x = Longitude, y = Latitude, color = preds)) +
 
 Wow, that's so cool!!! But, there are a bunch of things we can improve, for example adding a color ramp that's easier to read.
 
+```{r}
+# We could use the RColorBrewer package to make a spectral scale that looks cool
+library(RColorBrewer)
+myPalette <- colorRampPalette(rev(brewer.pal(10, "Spectral")))
+sc <- scale_colour_gradientn(colours = myPalette(10), limits=c(1, 10),
+                             oob = scales::squish)
+
+# Then we just add it to our ggplot like so, along with a couple of other 
+# changes in the name of beautiful data visualization
+ggplot(richness, aes(x = Longitude, y = Latitude, color = preds)) +
+  geom_point(size = 4, alpha = 0.85) +
+  facet_wrap(~Survey) +
+  sc +
+  labs(color = "Species Richness") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Presence-absence for a given species
