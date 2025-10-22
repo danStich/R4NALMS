@@ -7,9 +7,7 @@ title: "Applications of R for Aquatic Plant Data"
 
 <img src="./images/roh.png" alt="">
 
-Welcome Applications of R for Aquatic Plant data! This module will serve as a tutorial to help you understand how to improve your data and analysis workflows for aquatic plant data in R. 
-
-**This Site is Currently Under Construction** We are working on updating this page with a brand-new, whiz-bang module about aquatic plant data! We'll be in touch with workshop attendees once it is ready.
+Welcome Applications of R for Aquatic Plant data! This module will serve as a tutorial to help you understand how to improve your data and analysis workflows for aquatic plant data in R. In this module, we will read in and manipulate a standard data file format used for point-intercept (rake-toss) surveys, we will demonstrate some basic analyses for species richness and presence-absence data, and we will cover some tools for visualizing results.
 
 ## Libraries
 Let's go ahead and load the libraries we'll be working with in the first half of this workshop.
@@ -151,3 +149,47 @@ ggplot(richness, aes(x = Longitude, y = Latitude, color = preds)) +
 ```
 
 ## Presence-absence for a given species
+We could use a similar approach to the one we used above to explore trends in the presence of individual species as well. To do this, we could work directly with the Presence column we created in `long_data` during data manipulation. 
+
+Let's filter the data set so that we are working with a single species. You can choose a different one to work with, and none of the code that follows should need to change, although your results will likely differ dependent upon species.
+
+The perceived expansion of clasping pondweed (*P. richardsonii*) following dreissenid mussel invasions and increased water clarity has been a common topic of discussion at basically any gathering around Otsego Lake in recent years, so we'll check that out here.
+```{r}
+presence_data <- long_data %>% 
+  filter(Species == "Potamogeton_richardsonii")
+```
+
+Now, we can use the same `glm()` function that we used to analyze species richness in the example above, but this time we'll use a "binomial" family for logistic regression. It really is that easy to use in R.
+```{r}
+presence_mod <- glm(Presence ~ Longitude * Latitude + Survey,
+                    data = presence_data,
+                    family = binomial)
+```
+
+Just as before, we can make predictions from this model. In this case, the response scale is probability of presence.
+```{r}
+presence_data$fit <- predict(presence_mod, type = "response") 
+```
+
+And, we can now plot probability of presence by site and survey!
+```{r}
+# We could use the RColorBrewer package to make a spectral scale that looks cool
+library(RColorBrewer)
+myPalette <- colorRampPalette(rev(brewer.pal(10, "Spectral")))
+sc <- scale_colour_gradientn(colours = myPalette(10), limits=c(0, 1),
+                             oob = scales::squish)
+
+# Then we just add it to our ggplot like so, along with a couple of other 
+# changes in the name of beautiful data visualization
+ggplot(presence_data, aes(x = Longitude, y = Latitude, color = fit)) +
+  geom_point(size = 4, alpha = 0.85) +
+  facet_wrap(~Survey) +
+  sc +
+  labs(color = "Probability of presence") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Isn't that cool?
+
+## Summary
+In this module, we've walked through the process of data read, manipulation of a standard point-intercept data format, and examined multiple ways to analyze and visualize species richness and individual species presence-absence data. This should give you an appreciation for the power and diversity at your disposal in R. And, this is really just scratching the surface of the tools that are available to address these needs in R. And, hopefully, you have the confidence to start exploring more of those tools having been oriented to some of them!
