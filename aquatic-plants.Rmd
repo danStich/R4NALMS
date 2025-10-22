@@ -59,11 +59,11 @@ long_data$Presence[long_data$Abundance != "Z"] <- 1
 
 ```
 
-We could look at the presence absence data in a few different ways. First, let's estimate species richness for each `Site` and `Survey` using the replicate observations (`Toss`).
+We could look at the presence absence data in a few different ways. First, let's estimate species richness for each `Site` and `Survey` using the replicate observations (`Toss`). We're also keeping columns for `Longitude` and `Latitude` here so we can play with those below.
 
 ```{r, message=FALSE, warning = FALSE}
 richness <- long_data %>% 
-  group_by(Site, Survey) %>% 
+  group_by(Site, Survey, Longitude, Latitude) %>% 
   summarize(Richness = sum(Presence))
 ```
 
@@ -78,22 +78,58 @@ This is cool, but you could spend some time to make it a little prettier. It loo
 
 You could formally test for differences among groups using a variety of approaches.
 
-## TESTING CODE BELOW HERE
-The simplest approach, mostly free of distributional assumptions, would be to use a non-parametric Kruskal-Wallis test to determine whether there were significant differences in Richness among surveys.
+## Temporal trends in species richness
+The simplest approach, free of distributional assumptions and a lot of other potential statistical pitfalls, would be to use a non-parametric Kruskal-Wallis test to determine whether there were significant differences in Richness among surveys.
 ```{r}
 kruskal.test(Richness ~ Survey, data = richness)
 ```
 
+This tells us that there were differences among surveys, but it doesn't give us any statistical information about how richness differed among sites. For that you'd need to use some kind of pairwise comparison like the pairwise Wilcox test. Usually these tests have some kind of adjustment to account for increased Type-I error rate. Here we use a Bonferroni adjustment for p-values, although we are not advocating specifically for that approach (there are a bunch).
+
 ```{r}
-richness_mod <- glm(Richness ~ factor(Survey), 
+pairwise.wilcox.test(x = richness$Richness, g = richness$Survey, p.adjust.method = "bonferroni")
+```
+
+This output shows that richness differed significantly between `Survey 1` and `Survey 2` (p < 0.001), and `Survey 1` and `Survey 3` (p < 0.001), but we failed to detect a difference in `Richness` between `Survey 2` and `Survey 3` (p = 1). We could fall back on the boxplot we made above to report these results.
+
+At some point, you'd probably want to account for the fact that species richness observations are based on multiple sites and locations, either by incorporating that into statistical tests directly or as a "random effect" in more complex models.
+
+## Spatial trends in species richness
+We could also use R to investigate spatial trends in species richness. This requires a little more in-depth knowledge about statistics and modeling, but it is still pretty straightforward to do in R. This type of question is very approachable through use of generalized linear models that include everything from ANOVA, linear regression, and analysis of covariance (ANCOVA) to logistic regression and count models. And, these modeling tools are easy to use in R (maybe too easy) as long as you have a functional understanding of them. 
+
+For example, we could use the `glm()` function to examine spatial and temporal patterns in species richness pretty easily. We use a Poisson count model below to demonstrate what this could look like. 
+```{r}
+richness_mod <- glm(Richness ~ Longitude*Latitude + factor(Survey), 
                     data = richness, 
                     family = poisson)
 
 summary(richness_mod)
-
+```
+We could check out the residuals to see whether we are in extreme violation of distributional assumptions. These plots show that the model residuals are more-or-less symmetrical, which aligns with assumptions of the Poissson distribution. There are a few zeroes in the earliest survey that are expressed as a peak around -1 for survey 1 in the plot below. If this was a larger proportion we'd have to be careful about assessing their influence, and may opt for an alternative approach, but this will suffice for the rest of our example for now.
+```{r}
+# You can extract model residuals (errors) like this
+# and add them to the original data
 richness$residuals <- richness_mod$residuals
 
+# That makes it easy to graph the residuals in ggplot!
 ggplot(richness, aes(x = residuals)) +
   geom_histogram() +
   facet_wrap(~Survey)
 ```
+
+Then, we could make predictions from the statistical model to visualize the spatial and temporal patterns we found. Here, we'll just make predictions from the model on the response scale for simplicity (as opposed to the link scale, but that's a different workshop).
+
+```{r}
+richness$preds <-  predict(richness_mod, type = "response")
+```
+
+Now, we can plot predicted species richness.
+
+```{r}
+ggplot(richness, aes(x = Longitude, y = Latitude, color = preds)) +
+  geom_point() +
+  facet_wrap(~Survey)
+```
+
+Wow, that's so cool!!! But, there are a bunch of things we can improve, for example adding a color ramp that's easier to read.
+
