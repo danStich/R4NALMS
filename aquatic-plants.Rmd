@@ -10,3 +10,90 @@ title: "Applications of R for Aquatic Plant Data"
 Welcome Applications of R for Aquatic Plant data! This module will serve as a tutorial to help you understand how to improve your data and analysis workflows for aquatic plant data in R. 
 
 **This Site is Currently Under Construction** We are working on updating this page with a brand-new, whiz-bang module about aquatic plant data! We'll be in touch with workshop attendees once it is ready.
+
+## Libraries
+Let's go ahead and load the libraries we'll be working with in the first half of this workshop.
+```{r}
+library(tidyverse)
+```
+
+## Data
+The first data set we'll work with is from a point-intercept (rake-toss) survey in Otsego Lake, NY, USA during summer 2025. Well...sort of. 
+
+The original data were collected by Chii Kojima, an undergraduate at Mt. Holyoke College and SUNY Oneonta BFS summer intern, and Mairi Meehan, a professor at SUNY Cobleskill and BFS visiting faculty researcher. They completed 3 surveys at 54 points throughout the growing season on the dates included in the data set, with three rake tosses at each site. They recorded `Depth`, location (`Longitude` and `Latitude`), and categorical abundance (`Z`, `T`, `S`, `M`, or `D`) of each species at each site. If you are not familiar with this categorical abundance scale, the letters represent Zero, Trace, Sparse, Moderate, and Dense. They wanted to understand seasonality in plant presence and abundance and whether this and other factors could be used to improve survey design for long-term monitoring.
+
+We used the original data to simulate new data using an institutional large language model (LLM, "AI") to simulate new observations at sites and dates from the survey based on spatial and temporal autocorrelation in the data, with depth as a covariate of abundance, and with permission for all of this from the data originators. As an aside, this was a fun learning experience and the AI ended up using the same methods we would have employed, but ironically it used Python instead of R. And, it did a pretty not bad job of simulating the new data set that we'll play with. Back on track here.
+
+Read in the simulated data now that we are done with story time:
+
+```{r}
+plants <- read.csv("data/plant_abundances.csv")
+```
+
+Have a look at the data set using `glimpse()`, as shown below, or you can look at it in data table format using `View()`. We're not showing the output here in our version because it's a bit long.
+
+```{r, eval=FALSE}
+glimpse(plants)
+```
+
+This is a pretty standard point-intercept data set. It is in a somewhat "wide" format. That is, plant species are in columns to the right of all the other aggregated site and event data. The wide format is good for data entry and viewing in spreadsheets, but it is not how we'll want the data formatted for *most* of our needs in R.
+
+We'll first need to get the data set into a longer format to work with it more easily for most uses in R. This would be a bit of a copy-paste nightmare in your typical spreadsheet application. But, it is very easily done using the `pivot_longer()` function from the `dplyr` package. We're telling R to stack the individual columns for species `8:ncol(plants)` into two columns: one with species name, and one with categorical abundance. You would need to change this for a different data set, but could also do things like identify columns with underscore characters (`_`) if your species columns were named similarly.
+```{r}
+long_data <- pivot_longer(plants,
+                          cols = 8:ncol(plants),
+                          names_to = "Species",
+                          values_to = "Abundance")
+```
+
+## Presence-absence data
+First, we'll look at how we can work with information about presences and absences of plants at each site on each survey to say something about the plant community. Some common tools for assessing plant communities might include metrics such as species richness or evenness.
+
+To start with, we'll need to make a new column for presence-absence data so we can do things like add up species. There are a few different ways to do this. A succinct approach would be to initialize a new column that is all zeroes and then replace any zeroes with ones if the `Abundance` column contained anything other than `Z`. Like this:
+```{r}
+# Initialize new column called Presence of all `0`s
+long_data$Presence <- 0
+
+# Change this to `1` if Abundance does not equal `Z` for zero
+long_data$Presence[long_data$Abundance != "Z"] <- 1
+
+```
+
+We could look at the presence absence data in a few different ways. First, let's estimate species richness for each `Site` and `Survey` using the replicate observations (`Toss`).
+
+```{r, message=FALSE, warning = FALSE}
+richness <- long_data %>% 
+  group_by(Site, Survey) %>% 
+  summarize(Richness = sum(Presence))
+```
+
+Now we can make a boxplot to visualize richness across surveys (June, July, August) to see if there are obvious seasonal trends.
+
+```{r}
+ggplot(richness, aes(x = Survey, y = Richness, group = Survey)) +
+  geom_boxplot()
+```
+
+This is cool, but you could spend some time to make it a little prettier. It looks like there is an increase from June through the later months, but it's not super clear whether survey `2` and `3` differed from one another.
+
+You could formally test for differences among groups using a variety of approaches.
+
+## TESTING CODE BELOW HERE
+The simplest approach, mostly free of distributional assumptions, would be to use a non-parametric Kruskal-Wallis test to determine whether there were significant differences in Richness among surveys.
+```{r}
+kruskal.test(Richness ~ Survey, data = richness)
+```
+
+```{r}
+richness_mod <- glm(Richness ~ factor(Survey), 
+                    data = richness, 
+                    family = poisson)
+
+summary(richness_mod)
+
+richness$residuals <- richness_mod$residuals
+
+ggplot(richness, aes(x = residuals)) +
+  geom_histogram() +
+  facet_wrap(~Survey)
+```
