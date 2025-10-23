@@ -394,11 +394,11 @@ Data</h1>
 <p><img src="images/roh.png" alt=""></p>
 <p>Welcome Applications of R for Aquatic Plant data! This module will
 serve as a tutorial to help you understand how to improve your data and
-analysis workflows for aquatic plant data in R.</p>
-<p><strong>This Site is Currently Under Construction</strong> We are
-working on updating this page with a brand-new, whiz-bang module about
-aquatic plant data! We’ll be in touch with workshop attendees once it is
-ready.</p>
+analysis workflows for aquatic plant data in R. In this module, we will
+read in and manipulate a standard data file format used for
+point-intercept (rake-toss) surveys, we will demonstrate some basic
+analyses for species richness and presence-absence data, and we will
+cover some tools for visualizing results.</p>
 <div id="libraries" class="section level2">
 <h2>Libraries</h2>
 <p>Let’s go ahead and load the libraries we’ll be working with in the
@@ -503,8 +503,8 @@ of approaches.</p>
 <h2>Temporal trends in species richness</h2>
 <p>The simplest approach, free of distributional assumptions and a lot
 of other potential statistical pitfalls, would be to use a
-non-parametric Kruskal-Wallis test to determine whether there were
-significant differences in Richness among surveys.</p>
+non-parametric Kruskal-Wallis rank sum test to determine whether there
+were significant differences in Richness among surveys.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">kruskal.test</span>(Richness <span class="sc">~</span> Survey, <span class="at">data =</span> richness)</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    Kruskal<span class="sc">-</span>Wallis rank sum test</span>
@@ -629,6 +629,59 @@ improve, for example adding a color ramp that’s easier to read.</p>
 </div>
 <div id="presence-absence-for-a-given-species" class="section level2">
 <h2>Presence-absence for a given species</h2>
+<p>We could use a similar approach to the one we used above to explore
+trends in the presence of individual species as well. To do this, we
+could work directly with the Presence column we created in
+<code>long_data</code> during data manipulation.</p>
+<p>Let’s filter the data set so that we are working with a single
+species. You can choose a different one to work with, and none of the
+code that follows should need to change, although your results will
+likely differ dependent upon species.</p>
+<p>The perceived expansion of clasping pondweed (<em>P.
+richardsonii</em>) following dreissenid mussel invasions and increased
+water clarity has been a common topic of discussion at basically any
+gathering around Otsego Lake in recent years, so we’ll check that out
+here.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>presence_data <span class="ot">&lt;-</span> long_data <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">filter</span>(Species <span class="sc">==</span> <span class="st">&quot;Potamogeton_richardsonii&quot;</span>)</span></code></pre></div>
+<p>Now, we can use the same <code>glm()</code> function that we used to
+analyze species richness in the example above, but this time we’ll use a
+“binomial” family for logistic regression. It really is that easy to use
+in R.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>presence_mod <span class="ot">&lt;-</span> <span class="fu">glm</span>(Presence <span class="sc">~</span> Longitude <span class="sc">*</span> Latitude <span class="sc">+</span> Survey,</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>                    <span class="at">data =</span> presence_data,</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>                    <span class="at">family =</span> binomial)</span></code></pre></div>
+<p>Just as before, we can make predictions from this model. In this
+case, the response scale is probability of presence.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>presence_data<span class="sc">$</span>fit <span class="ot">&lt;-</span> <span class="fu">predict</span>(presence_mod, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>) </span></code></pre></div>
+<p>And, we can now plot probability of presence by site and survey!</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># We could use the RColorBrewer package to make a spectral scale that looks cool</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>myPalette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="dv">10</span>, <span class="st">&quot;Spectral&quot;</span>)))</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>                             <span class="at">oob =</span> scales<span class="sc">::</span>squish)</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co"># Then we just add it to our ggplot like so, along with a couple of other </span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co"># changes in the name of beautiful data visualization</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="fu">ggplot</span>(presence_data, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">color =</span> fit)) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey) <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>  sc <span class="sc">+</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Probability of presence&quot;</span>) <span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="aquatic-plants_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>Isn’t that cool?</p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>In this module, we’ve walked through the process of data read,
+manipulation of a standard point-intercept data format, and examined
+multiple ways to analyze and visualize species richness and individual
+species presence-absence data. This should give you an appreciation for
+the power and diversity at your disposal in R. And, this is really just
+scratching the surface of the tools that are available to address these
+needs in R. And, hopefully, you have the confidence to start exploring
+more of those tools having been oriented to some of them!</p>
 </div>
 
 <!DOCTYPE html>
