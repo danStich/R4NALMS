@@ -6,16 +6,13 @@ Symposium
 
 
 ## Workshop participants
-The data for the workshop are stored in the `data` folder. 
+All data and code files needed for both sessions are 
+located above. You can download the workshop content as a 
+compressed (ZIP) folder by clicking on the green "code" button 
+and choosing "Download ZIP" in the drop down menu that appears. 
+The screenshot below demonstrates this.
 
-You can download these data files individually by clicking on the 
-`data` folder, then clicking on data file name, then clicking on 
-download button that is two buttons to the right of the `Raw` button.
-
-Alternatively, you can download the entire repository as a compressed
-folder by clicking on the green code button in the main 
-repository. This will also provide you with the markdown files
-and R code used to generate the workshop examples.
+<img src="./images/repo-screenshot.png" alt="logos for software">
 
 
 ## Repository structure
