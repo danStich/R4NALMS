@@ -391,7 +391,7 @@ Data</h1>
 </div>
 
 
-<p><img src="images/roh.png" alt=""></p>
+<p><img src="images/plants.jpg" alt=""></p>
 <p>Welcome Applications of R for Aquatic Plant data! This module will
 serve as a tutorial to help you understand how to improve your data and
 analysis workflows for aquatic plant data in R. In this module, we will
@@ -403,7 +403,8 @@ cover some tools for visualizing results.</p>
 <h2>Libraries</h2>
 <p>Let’s go ahead and load the libraries we’ll be working with in the
 first half of this workshop.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Data manipulation, summaries, plotting</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer) <span class="co"># Pretty color ramps for graphs</span></span></code></pre></div>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -518,17 +519,19 @@ like the pairwise Wilcox test. Usually these tests have some kind of
 adjustment to account for increased Type-I error rate. Here we use a
 Bonferroni adjustment for p-values, although we are not advocating
 specifically for that approach (there are a bunch).</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">pairwise.wilcox.test</span>(<span class="at">x =</span> richness<span class="sc">$</span>Richness, <span class="at">g =</span> richness<span class="sc">$</span>Survey, <span class="at">p.adjust.method =</span> <span class="st">&quot;bonferroni&quot;</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    Pairwise comparisons using Wilcoxon rank sum test with continuity correction </span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">pairwise.wilcox.test</span>(<span class="at">x =</span> richness<span class="sc">$</span>Richness, </span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>                     <span class="at">g =</span> richness<span class="sc">$</span>Survey, </span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>                     <span class="at">p.adjust.method =</span> <span class="st">&quot;bonferroni&quot;</span>)</span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>data<span class="sc">:</span>  richness<span class="sc">$</span>Richness and richness<span class="sc">$</span>Survey </span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    Pairwise comparisons using Wilcoxon rank sum test with continuity correction </span>
 <span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="dv">1</span>       <span class="dv">2</span></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="dv">2</span> <span class="fl">8.6e-07</span> <span class="sc">-</span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="dv">3</span> <span class="fl">3.2e-06</span> <span class="dv">1</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>P value adjustment method<span class="sc">:</span> bonferroni </span></code></pre></div>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>data<span class="sc">:</span>  richness<span class="sc">$</span>Richness and richness<span class="sc">$</span>Survey </span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="dv">1</span>       <span class="dv">2</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="dv">2</span> <span class="fl">8.6e-07</span> <span class="sc">-</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="dv">3</span> <span class="fl">3.2e-06</span> <span class="dv">1</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>P value adjustment method<span class="sc">:</span> bonferroni </span></code></pre></div>
 <p>This output shows that richness differed significantly between
 <code>Survey 1</code> and <code>Survey 2</code> (p &lt; 0.001), and
 <code>Survey 1</code> and <code>Survey 3</code> (p &lt; 0.001), but we
@@ -612,19 +615,18 @@ opposed to the link scale, but that’s a different workshop).</p>
 <p>Wow, that’s so cool!!! But, there are a bunch of things we can
 improve, for example adding a color ramp that’s easier to read.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># We could use the RColorBrewer package to make a spectral scale that looks cool</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>myPalette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="dv">10</span>, <span class="st">&quot;Spectral&quot;</span>)))</span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">10</span>),</span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                             <span class="at">oob =</span> scales<span class="sc">::</span>squish)</span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># Then we just add it to our ggplot like so, along with a couple of other </span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co"># changes in the name of beautiful data visualization</span></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="fu">ggplot</span>(richness, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">color =</span> preds)) <span class="sc">+</span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey) <span class="sc">+</span></span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>  sc <span class="sc">+</span></span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Species Richness&quot;</span>) <span class="sc">+</span></span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>myPalette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="dv">10</span>, <span class="st">&quot;Spectral&quot;</span>)))</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">10</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                             <span class="at">oob =</span> scales<span class="sc">::</span>squish)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co"># Then we just add it to our ggplot like so, along with a couple of other </span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># changes in the name of beautiful data visualization</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="fu">ggplot</span>(richness, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">color =</span> preds)) <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey) <span class="sc">+</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>  sc <span class="sc">+</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Species Richness&quot;</span>) <span class="sc">+</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
 <p><img src="aquatic-plants_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 <div id="presence-absence-for-a-given-species" class="section level2">
@@ -656,19 +658,18 @@ case, the response scale is probability of presence.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>presence_data<span class="sc">$</span>fit <span class="ot">&lt;-</span> <span class="fu">predict</span>(presence_mod, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>) </span></code></pre></div>
 <p>And, we can now plot probability of presence by site and survey!</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># We could use the RColorBrewer package to make a spectral scale that looks cool</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>myPalette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="dv">10</span>, <span class="st">&quot;Spectral&quot;</span>)))</span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>                             <span class="at">oob =</span> scales<span class="sc">::</span>squish)</span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a></span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co"># Then we just add it to our ggplot like so, along with a couple of other </span></span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co"># changes in the name of beautiful data visualization</span></span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="fu">ggplot</span>(presence_data, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">color =</span> fit)) <span class="sc">+</span></span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey) <span class="sc">+</span></span>
-<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>  sc <span class="sc">+</span></span>
-<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Probability of presence&quot;</span>) <span class="sc">+</span></span>
-<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>myPalette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="dv">10</span>, <span class="st">&quot;Spectral&quot;</span>)))</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>                             <span class="at">oob =</span> scales<span class="sc">::</span>squish)</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co"># Then we just add it to our ggplot like so, along with a couple of other </span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co"># changes in the name of beautiful data visualization</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="fu">ggplot</span>(presence_data, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">color =</span> fit)) <span class="sc">+</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Survey) <span class="sc">+</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>  sc <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Probability of presence&quot;</span>) <span class="sc">+</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
 <p><img src="aquatic-plants_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>Isn’t that cool?</p>
 </div>

@@ -5,14 +5,16 @@
 title: "Applications of R for Aquatic Plant Data"
 ---
 
-<img src="./images/roh.png" alt="">
+<img src="./images/plants.jpg" alt="">
 
 Welcome Applications of R for Aquatic Plant data! This module will serve as a tutorial to help you understand how to improve your data and analysis workflows for aquatic plant data in R. In this module, we will read in and manipulate a standard data file format used for point-intercept (rake-toss) surveys, we will demonstrate some basic analyses for species richness and presence-absence data, and we will cover some tools for visualizing results.
+
 
 ## Libraries
 Let's go ahead and load the libraries we'll be working with in the first half of this workshop.
 ```{r}
-library(tidyverse)
+library(tidyverse) # Data manipulation, summaries, plotting
+library(RColorBrewer) # Pretty color ramps for graphs
 ```
 
 ## Data
@@ -85,7 +87,9 @@ kruskal.test(Richness ~ Survey, data = richness)
 This tells us that there were differences among surveys, but it doesn't give us any statistical information about how richness differed among sites. For that you'd need to use some kind of pairwise comparison like the pairwise Wilcox test. Usually these tests have some kind of adjustment to account for increased Type-I error rate. Here we use a Bonferroni adjustment for p-values, although we are not advocating specifically for that approach (there are a bunch).
 
 ```{r}
-pairwise.wilcox.test(x = richness$Richness, g = richness$Survey, p.adjust.method = "bonferroni")
+pairwise.wilcox.test(x = richness$Richness, 
+                     g = richness$Survey, 
+                     p.adjust.method = "bonferroni")
 ```
 
 This output shows that richness differed significantly between `Survey 1` and `Survey 2` (p < 0.001), and `Survey 1` and `Survey 3` (p < 0.001), but we failed to detect a difference in `Richness` between `Survey 2` and `Survey 3` (p = 1). We could fall back on the boxplot we made above to report these results.
@@ -133,7 +137,6 @@ Wow, that's so cool!!! But, there are a bunch of things we can improve, for exam
 
 ```{r}
 # We could use the RColorBrewer package to make a spectral scale that looks cool
-library(RColorBrewer)
 myPalette <- colorRampPalette(rev(brewer.pal(10, "Spectral")))
 sc <- scale_colour_gradientn(colours = myPalette(10), limits=c(1, 10),
                              oob = scales::squish)
@@ -174,7 +177,6 @@ presence_data$fit <- predict(presence_mod, type = "response")
 And, we can now plot probability of presence by site and survey!
 ```{r}
 # We could use the RColorBrewer package to make a spectral scale that looks cool
-library(RColorBrewer)
 myPalette <- colorRampPalette(rev(brewer.pal(10, "Spectral")))
 sc <- scale_colour_gradientn(colours = myPalette(10), limits=c(0, 1),
                              oob = scales::squish)

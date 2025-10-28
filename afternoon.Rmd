@@ -6,7 +6,7 @@
 title: Applications of R for Aquatic Plant Data
 ---
 
-<img src="./images/secchi.jpg" alt="Image of a Secchi disk">
+<img src="./images/plants.jpg" alt="Image of aquatic plants">
 
 The Applications of R for Aquatic Plant Data workshop will expand on the Introduction to R for Aquatic Research workshop and demonstrate some of the powerful tools available through worked examples. It is our hope that by the end of this session, you will be comfortable conducting some basic analyses and producing related graphics. During this session, you will be exposed to more data manipulation in the `tidyverse`, statistical analyses, and a whole lot of plotting using the powerful utilities provided through the `ggplot2` package. This workshop assumes a basic understanding of elementary statistics, and working knowledge of R and Rstudio. Those attending the Introduction to R for Aquatic Research will be sufficiently prepared for this workshop.
 
