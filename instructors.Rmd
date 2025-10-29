@@ -7,7 +7,9 @@ title: "Instructors"
 
 <br>
 
-**Anna Haws** is an Aquatic Invasive Species Research and Outreach Specialist with the [New York Water Resources Institute at Cornell University](https://cals.cornell.edu/water-resources-institute).
+**Anna Haws** is an Aquatic Invasive Species Research and Outreach Specialist with the [New York Water Resources Institute at Cornell University](https://cals.cornell.edu/water-resources-institute). She holds a PhD in Fish and Wildlife Biology and Management from the SUNY College of Environmental Science and Forestry. Anna often uses R for data visualization and analysis in her research on invasive species, some examples include round goby life history analysis, fish disease (VHSV) modelling, and summarizing big data associated with New York’s Watercraft Inspection Steward Program. 
+
+**Contact**: Anna Haws ([ah2355\@cornell.edu](mailto:ah2355@cornell.edu){.email}). 
 
 **Dan Stich** is a Professor in the [SUNY Oneonta Biology Department](https://suny.oneonta.edu/biology-department) and [Biological Field Station](https://suny.oneonta.edu/biological-field-station). He teaches undergraduate and graduate courses in biometry, lake management, and ichthyology. Dan works extensively with R in research and teaching, and maintains multiple R packages as well as his very own, poorly written, unpublished OER textbook, [The Worst Stats Text eveR](https://danstich.github.io/worst-r/).
 
