@@ -10,7 +10,7 @@ title: "Introduction to R for Aquatic Research"
 
 The Introduction to R for Aquatic Research workshop will provide an introduction to the basics of working in R. By the end of this session, you should be comfortable working through these and other examples on your own in the future so you can learn more about the program. During this session, you will be exposed to a broad overview of programming in R, read in data from external files, learn to work with "packages", do some basic data manipulation and summary statistics, and use data to make some graphs. We will also cover basic syntax and mechanics of the program to facilitate discussion of more advanced topics during the <a href="afternoon.html">Applications of R for Aquatic Plant Data Workshop</a>.
 
-You can find the **online tutorial for the first half** of the Introduction to R workshop <a href="Introductory-I.html"> here </a>.<br>
+You can find the **online tutorial for the first half** of the Introduction to R workshop <a href="introductory-I.html"> here </a>.<br>
 You can find the **online tutorial for the second half** of the Introduction to R workshop <a href="Introductory-II.html"> here </a>. <br>
 
 <!-- The **data and code files** needed for both workshops <a href="https://github.com/danStich/data4_r4nalms"> here </a>, along with instructions for download. -->
