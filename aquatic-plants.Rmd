@@ -63,7 +63,7 @@ We could look at the presence absence data in a few different ways. First, let's
 
 ```{r, message=FALSE, warning = FALSE}
 richness <- long_data %>% 
-  group_by(Site, Survey, Longitude, Latitude) %>% 
+  group_by(Site, Survey, Toss, Longitude, Latitude) %>% 
   summarize(Richness = sum(Presence))
 ```
 
@@ -74,7 +74,7 @@ ggplot(richness, aes(x = Survey, y = Richness, group = Survey)) +
   geom_boxplot()
 ```
 
-This is cool, but you could spend some time to make it a little prettier. It looks like there is an increase from June through the later months, but it's not super clear whether survey `2` and `3` differed from one another.
+This is cool, but you could spend some time to make it a little prettier. It looks like there is an increase from June through the later months, but it's not super clear whether `Richness` differed between surveys `2` and `3`.
 
 You could formally test for differences among groups using a variety of approaches.
 
@@ -107,7 +107,7 @@ richness_mod <- glm(Richness ~ Longitude*Latitude + factor(Survey),
 
 summary(richness_mod)
 ```
-We could check out the residuals to see whether we are in extreme violation of distributional assumptions. These plots show that the model residuals are more-or-less symmetrical, which aligns with assumptions of the Poissson distribution. There are a few zeroes in the earliest survey that are expressed as a peak around -1 for survey 1 in the plot below. If this was a larger proportion we'd have to be careful about assessing their influence, and may opt for an alternative approach, but this will suffice for the rest of our example for now.
+We could check out the residuals to see whether we are in extreme violation of distributional assumptions. These plots show that the model residuals in Surveys 2 and 3 are more-or-less symmetrical, which aligns with assumptions of the Poisson distribution. But, there are quite a few zeroes in the earliest survey that are expressed as a peak around -1 for survey 1 in the plot below. If this was a real analysis we'd have to be careful about assessing their influence, and may opt for an alternative approach, but this will suffice for the rest of our example for now.
 ```{r}
 # You can extract model residuals (errors) like this
 # and add them to the original data
@@ -138,7 +138,7 @@ Wow, that's so cool!!! But, there are a bunch of things we can improve, for exam
 ```{r}
 # We could use the RColorBrewer package to make a spectral scale that looks cool
 myPalette <- colorRampPalette(rev(brewer.pal(10, "Spectral")))
-sc <- scale_colour_gradientn(colours = myPalette(10), limits=c(1, 10),
+sc <- scale_colour_gradientn(colours = myPalette(10), limits=c(1, 4),
                              oob = scales::squish)
 
 # Then we just add it to our ggplot like so, along with a couple of other 
@@ -164,7 +164,7 @@ presence_data <- long_data %>%
 
 Now, we can use the same `glm()` function that we used to analyze species richness in the example above, but this time we'll use a "binomial" family for logistic regression. It really is that easy to use in R.
 ```{r}
-presence_mod <- glm(Presence ~ Longitude * Latitude + Survey,
+presence_mod <- glm(Presence ~ Longitude * Latitude + factor(Survey),
                     data = presence_data,
                     family = binomial)
 ```

@@ -486,7 +486,7 @@ First, let’s estimate species richness for each <code>Site</code> and
 <code>Longitude</code> and <code>Latitude</code> here so we can play
 with those below.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> long_data <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Site, Survey, Longitude, Latitude) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Site, Survey, Toss, Longitude, Latitude) <span class="sc">%&gt;%</span> </span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Richness =</span> <span class="fu">sum</span>(Presence))</span></code></pre></div>
 <p>Now we can make a boxplot to visualize richness across surveys (June,
 July, August) to see if there are obvious seasonal trends.</p>
@@ -495,8 +495,8 @@ July, August) to see if there are obvious seasonal trends.</p>
 <p><img src="aquatic-plants_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>This is cool, but you could spend some time to make it a little
 prettier. It looks like there is an increase from June through the later
-months, but it’s not super clear whether survey <code>2</code> and
-<code>3</code> differed from one another.</p>
+months, but it’s not super clear whether <code>Richness</code> differed
+between surveys <code>2</code> and <code>3</code>.</p>
 <p>You could formally test for differences among groups using a variety
 of approaches.</p>
 </div>
@@ -511,7 +511,7 @@ were significant differences in Richness among surveys.</p>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    Kruskal<span class="sc">-</span>Wallis rank sum test</span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>data<span class="sc">:</span>  Richness by Survey</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>Kruskal<span class="sc">-</span>Wallis chi<span class="sc">-</span>squared <span class="ot">=</span> <span class="fl">33.549</span>, df <span class="ot">=</span> <span class="dv">2</span>, p<span class="sc">-</span>value <span class="ot">=</span> <span class="fl">5.187e-08</span></span></code></pre></div>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>Kruskal<span class="sc">-</span>Wallis chi<span class="sc">-</span>squared <span class="ot">=</span> <span class="fl">60.202</span>, df <span class="ot">=</span> <span class="dv">2</span>, p<span class="sc">-</span>value <span class="ot">=</span> <span class="fl">8.459e-14</span></span></code></pre></div>
 <p>This tells us that there were differences among surveys, but it
 doesn’t give us any statistical information about how richness differed
 among sites. For that you’d need to use some kind of pairwise comparison
@@ -528,8 +528,8 @@ specifically for that approach (there are a bunch).</p>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>data<span class="sc">:</span>  richness<span class="sc">$</span>Richness and richness<span class="sc">$</span>Survey </span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
 <span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="dv">1</span>       <span class="dv">2</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="dv">2</span> <span class="fl">8.6e-07</span> <span class="sc">-</span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="dv">3</span> <span class="fl">3.2e-06</span> <span class="dv">1</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="dv">2</span> <span class="fl">3.4e-11</span> <span class="sc">-</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="dv">3</span> <span class="fl">7.0e-11</span> <span class="dv">1</span></span>
 <span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a></span>
 <span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>P value adjustment method<span class="sc">:</span> bonferroni </span></code></pre></div>
 <p>This output shows that richness differed significantly between
@@ -580,19 +580,19 @@ like.</p>
 <span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a></span>
 <span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a>(Dispersion parameter <span class="cf">for</span> poisson family taken to be <span class="dv">1</span>)</span>
 <span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a></span>
-<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a>    Null deviance<span class="sc">:</span> <span class="fl">340.47</span>  on <span class="dv">161</span>  degrees of freedom</span>
-<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a>Residual deviance<span class="sc">:</span> <span class="fl">207.62</span>  on <span class="dv">156</span>  degrees of freedom</span>
-<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a>AIC<span class="sc">:</span> <span class="fl">730.52</span></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a>    Null deviance<span class="sc">:</span> <span class="fl">639.03</span>  on <span class="dv">485</span>  degrees of freedom</span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a>Residual deviance<span class="sc">:</span> <span class="fl">506.18</span>  on <span class="dv">480</span>  degrees of freedom</span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a>AIC<span class="sc">:</span> <span class="fl">1473.7</span></span>
 <span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a></span>
 <span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a>Number of Fisher Scoring iterations<span class="sc">:</span> <span class="dv">5</span></span></code></pre></div>
 <p>We could check out the residuals to see whether we are in extreme
 violation of distributional assumptions. These plots show that the model
-residuals are more-or-less symmetrical, which aligns with assumptions of
-the Poissson distribution. There are a few zeroes in the earliest survey
-that are expressed as a peak around -1 for survey 1 in the plot below.
-If this was a larger proportion we’d have to be careful about assessing
-their influence, and may opt for an alternative approach, but this will
-suffice for the rest of our example for now.</p>
+residuals in Surveys 2 and 3 are more-or-less symmetrical, which aligns
+with assumptions of the Poisson distribution. But, there are quite a few
+zeroes in the earliest survey that are expressed as a peak around -1 for
+survey 1 in the plot below. If this was a real analysis we’d have to be
+careful about assessing their influence, and may opt for an alternative
+approach, but this will suffice for the rest of our example for now.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># You can extract model residuals (errors) like this</span></span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co"># and add them to the original data</span></span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>richness<span class="sc">$</span>residuals <span class="ot">&lt;-</span> richness_mod<span class="sc">$</span>residuals</span>
@@ -616,7 +616,7 @@ opposed to the link scale, but that’s a different workshop).</p>
 improve, for example adding a color ramp that’s easier to read.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># We could use the RColorBrewer package to make a spectral scale that looks cool</span></span>
 <span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>myPalette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">rev</span>(<span class="fu">brewer.pal</span>(<span class="dv">10</span>, <span class="st">&quot;Spectral&quot;</span>)))</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">10</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">scale_colour_gradientn</span>(<span class="at">colours =</span> <span class="fu">myPalette</span>(<span class="dv">10</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>),</span>
 <span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                             <span class="at">oob =</span> scales<span class="sc">::</span>squish)</span>
 <span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
 <span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co"># Then we just add it to our ggplot like so, along with a couple of other </span></span>
@@ -650,7 +650,7 @@ here.</p>
 analyze species richness in the example above, but this time we’ll use a
 “binomial” family for logistic regression. It really is that easy to use
 in R.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>presence_mod <span class="ot">&lt;-</span> <span class="fu">glm</span>(Presence <span class="sc">~</span> Longitude <span class="sc">*</span> Latitude <span class="sc">+</span> Survey,</span>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>presence_mod <span class="ot">&lt;-</span> <span class="fu">glm</span>(Presence <span class="sc">~</span> Longitude <span class="sc">*</span> Latitude <span class="sc">+</span> <span class="fu">factor</span>(Survey),</span>
 <span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>                    <span class="at">data =</span> presence_data,</span>
 <span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>                    <span class="at">family =</span> binomial)</span></code></pre></div>
 <p>Just as before, we can make predictions from this model. In this
